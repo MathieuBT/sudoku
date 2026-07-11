@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Online Sudoku - Play Unlimited Sudoku Puzzles in Your Browser</title>
+  <meta name="description" content="Play free online Sudoku with unlimited puzzles in three difficulty levels: easy, medium, and hard. No download or sign-up required. Use the mouse or keyboard, take notes, check your grid, and track your time and mistakes." />
+  <meta name="keywords" content="sudoku, online sudoku, free sudoku, sudoku game, play sudoku online, sudoku puzzle, daily sudoku, sudoku no download" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Mathieu Boutros" />
+  <link rel="canonical" href="https://mathieubt.github.io/sudoku/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Free Online Sudoku - Play Unlimited Sudoku Puzzles" />
+  <meta property="og:description" content="Play free online Sudoku with unlimited puzzles in three difficulty levels. No download or sign-up required. Use the mouse or keyboard to play." />
+  <meta property="og:url" content="https://mathieubt.github.io/sudoku/" />
+  <meta property="og:site_name" content="Sudoku" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Free Online Sudoku - Play Unlimited Sudoku Puzzles" />
+  <meta name="twitter:description" content="Play free online Sudoku with unlimited puzzles in three difficulty levels. No download or sign-up required. Use the mouse or keyboard to play." />
+
+  <!-- Structured data for search engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sudoku",
+    "description": "Play free online Sudoku with unlimited puzzles in three difficulty levels: easy, medium, and hard. No download or sign-up required.",
+    "applicationCategory": "GameApplication",
+    "genre": "Puzzle",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this Sudoku game free to play?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, this online Sudoku is completely free, with no sign-up or download required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I play Sudoku with the keyboard?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, use the number keys 1-9 to fill a cell, Backspace or Delete to erase, arrow keys to move around the grid, and the N key to toggle notes mode."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What difficulty levels are available?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can choose between easy, medium, and hard difficulty before starting a new grid."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the game save my progress?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Each new grid starts fresh in your browser. Use the Check button anytime to spot conflicts and the Solve button to reveal the full solution."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2;
+      --color-surface: #fbfbf9;
+      --color-surface-2: #f1eee8;
+      --color-border: #d4d1ca;
+      --color-divider: #c9c5bd;
+      --color-text: #28251d;
+      --color-text-muted: #6f6c66;
+      --color-text-faint: #9b9891;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #dbe8e6;
+      --color-success: #437a22;
+      --color-error: #a12c7b;
+      --color-warning: #d19900;
+      --color-cell-fixed: #ece8df;
+      --color-cell-selected: #cfe3e4;
+      --color-cell-related: #e9f1f1;
+      --color-cell-conflict: #f3d8e7;
+      --shadow-sm: 0 1px 2px rgba(40,37,29,.06);
+      --shadow-md: 0 10px 30px rgba(40,37,29,.09);
+      --radius-sm: .5rem; --radius-md: .75rem; --radius-lg: 1rem; --radius-xl: 1.25rem; --radius-full: 9999px;
+      --font-body: 'Satoshi', system-ui, sans-serif;
+      --font-display: 'Cabinet Grotesk', 'Satoshi', sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1c1b19;
+      --color-surface-2: #262421;
+      --color-border: #393836;
+      --color-divider: #44423e;
+      --color-text: #ece8df;
+      --color-text-muted: #b0aba0;
+      --color-text-faint: #7c776d;
+      --color-primary: #4f98a3;
+      --color-primary-hover: #67aab4;
+      --color-primary-highlight: #243234;
+      --color-success: #8fc06a;
+      --color-error: #d163a7;
+      --color-warning: #e8af34;
+      --color-cell-fixed: #2a2824;
+      --color-cell-selected: #284246;
+      --color-cell-related: #202c2e;
+      --color-cell-conflict: #4b2d3e;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.25);
+      --shadow-md: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: none; text-size-adjust: none; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 30%),
+        radial-gradient(circle at bottom right, color-mix(in srgb, var(--color-warning) 10%, transparent), transparent 26%),
+        var(--color-bg);
+    }
+    button, input, select { font: inherit; }
+    button {
+      border: 0; cursor: pointer; color: inherit;
+      transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+    button:active { transform: translateY(1px) scale(.99); }
+    .app {
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: var(--space-6) 0 var(--space-10);
+    }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .brand {
+      display: flex; align-items: center; gap: var(--space-3);
+    }
+    .logo {
+      width: 2.75rem; height: 2.75rem; padding: .55rem; border-radius: .85rem;
+      background: var(--color-surface); border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      box-shadow: var(--shadow-sm);
+    }
+    .brand h1 {
+      margin: 0; font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: -.03em;
+    }
+    .brand p { margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .theme-toggle, .icon-btn {
+      min-width: 44px; min-height: 44px; display: inline-grid; place-items: center;
+      border-radius: var(--radius-full); background: var(--color-surface);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      box-shadow: var(--shadow-sm);
+    }
+    .layout {
+      display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-6);
+      align-items: start;
+    }
+    .panel {
+      background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(10px);
+    }
+    .board-card { padding: var(--space-5); }
+    .board-head {
+      display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .45rem; padding: .45rem .8rem; border-radius: var(--radius-full);
+      background: var(--color-primary-highlight); color: var(--color-primary); font-size: var(--text-sm); font-weight: 700;
+    }
+    .board-wrap { display: grid; gap: var(--space-4); }
+    .sudoku-board {
+      display: grid; grid-template-columns: repeat(9, 1fr); gap: 0;
+      border: 2px solid var(--color-text); border-radius: .85rem; overflow: hidden; background: var(--color-border);
+      user-select: none;
+      touch-action: manipulation;
+      aspect-ratio: 1 / 1;
+    }
+    .cell {
+      position: relative;
+      display: grid; place-items: center;
+      background: var(--color-surface);
+      min-height: 0;
+      aspect-ratio: 1 / 1;
+      border-right: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent);
+      font-size: clamp(1rem, 2.1vw, 1.7rem);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cell.fixed { background: var(--color-cell-fixed); color: var(--color-text); }
+    .cell.selected { background: var(--color-cell-selected); }
+    .cell.related { background: var(--color-cell-related); }
+    .cell.conflict { background: var(--color-cell-conflict); color: var(--color-error); }
+    .cell.same-number:not(.selected) { box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--color-primary) 10%, transparent); }
+    .cell:nth-child(3n) { border-right: 2px solid var(--color-text); }
+    .cell:nth-child(9n) { border-right: 0; }
+    .cell:nth-child(n+19):nth-child(-n+27),
+    .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--color-text); }
+    .cell .notes {
+      position: absolute; inset: .15rem;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: .05rem;
+      font-size: clamp(.38rem, 1vw, .68rem);
+      color: var(--color-text-muted); font-weight: 500;
+      pointer-events: none;
+    }
+    .cell .notes span { display: grid; place-items: center; }
+    .controls, .stats, .tips { padding: var(--space-5); }
+    .controls { display: grid; gap: var(--space-4); }
+    .control-group { display: grid; gap: var(--space-2); }
+    .control-group label { font-size: var(--text-sm); color: var(--color-text-muted); font-weight: 700; }
+    .select, .btn {
+      min-height: 44px; border-radius: var(--radius-md);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      background: var(--color-surface-2); color: var(--color-text);
+      padding: .85rem 1rem;
+    }
+    .btn { background: var(--color-surface); font-weight: 700; }
+    .btn.primary { background: var(--color-primary); color: white; }
+    .btn.primary:hover { background: var(--color-primary-hover); }
+    .btn-row, .num-pad {
+      display: grid; gap: var(--space-2);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .num-pad { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .num-btn.active { background: var(--color-primary-highlight); color: var(--color-primary); }
+    .wide { grid-column: 1 / -1; }
+    .stats { display: grid; gap: var(--space-3); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+    .stat {
+      padding: var(--space-3); border-radius: var(--radius-lg); background: var(--color-surface-2);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    }
+    .stat span { display: block; font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .08em; }
+    .stat strong { display: block; margin-top: .2rem; font-size: var(--text-lg); font-variant-numeric: tabular-nums; }
+    .status {
+      padding: .9rem 1rem; border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 700;
+      background: var(--color-surface-2); border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    }
+    .status.success { color: var(--color-success); }
+    .status.error { color: var(--color-error); }
+    .status.info { color: var(--color-primary); }
+    .tips ul { margin: 0; padding-left: 1.2rem; color: var(--color-text-muted); }
+    .tips li + li { margin-top: .45rem; }
+    .footer-note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--color-text-muted); }
+    .section-title { margin: 0 0 .4rem; font-size: var(--text-lg); }
+    .muted { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    @media (max-width: 940px) {
+      .layout { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .app { width: min(100%, calc(100% - 1rem)); padding-top: var(--space-4); }
+      .topbar { align-items: flex-start; }
+      .board-card, .controls, .stats, .tips { padding: var(--space-4); }
+      .num-pad { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .btn-row { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .cell { font-size: clamp(1rem, 5vw, 1.45rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+
+    /* Ko-fi floating button */
+    .kofi-float {
+      position: fixed;
+      left: var(--space-4);
+      bottom: var(--space-4);
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      padding: .7rem 1.1rem;
+      border-radius: var(--radius-full);
+      background: #FF5E5B;
+      color: #fff;
+      font-weight: 700;
+      font-size: var(--text-sm);
+      text-decoration: none;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .kofi-float:hover { background: #ff4744; }
+    .kofi-float svg { flex-shrink: 0; }
+
+    /* Donation modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(20, 18, 14, .45);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: var(--space-4);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      width: min(380px, 100%);
+      background: var(--color-surface);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-6);
+      text-align: center;
+      display: grid;
+      gap: var(--space-3);
+    }
+    .modal-card .modal-emoji { font-size: 2.25rem; }
+    .modal-card h3 { margin: 0; font-family: var(--font-display); font-size: var(--text-lg); }
+    .modal-card p { margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .modal-actions { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+    .modal-actions .btn-kofi {
+      background: #FF5E5B; color: #fff; border-radius: var(--radius-md);
+      min-height: 44px; font-weight: 700; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    }
+    .modal-actions .btn-kofi:hover { background: #ff4744; }
+    .modal-actions .btn-dismiss {
+      background: transparent; color: var(--color-text-muted); border-radius: var(--radius-md);
+      min-height: 44px; font-weight: 600;
+    }
+    .modal-actions .btn-dismiss:hover { color: var(--color-text); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 64 64" aria-label="Sudoku logo" fill="none">
+          <rect x="6" y="6" width="52" height="52" rx="14" stroke="currentColor" stroke-width="4"/>
+          <path d="M22 6v52M42 6v52M6 22h52M6 42h52" stroke="currentColor" stroke-width="3" opacity=".65"/>
+          <path d="M16 16h12v12H16zM36 16h12v12H36zM26 36h12v12H26z" fill="currentColor"/>
+        </svg>
+        <div>
+          <h1>Sudoku</h1>
+          <p>Play with the mouse or the keyboard.</p>
+        </div>
+      </div>
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </header>
+
+    <p class="muted" style="max-width: 70ch; margin: 0 0 var(--space-6);">
+      Play free online Sudoku right in your browser — no download, no account, no ads getting in the way.
+      Pick easy, medium, or hard, fill the 9x9 grid, and get a brand new puzzle every time you start a game.
+    </p>
+
+    <main class="layout">
+      <section class="panel board-card">
+        <div class="board-head">
+          <div>
+            <div class="badge">Interactive grid</div>
+          </div>
+          <div class="muted">Click a cell, then choose a number.</div>
+        </div>
+        <div class="board-wrap">
+          <div class="sudoku-board" id="board" role="grid" aria-label="Sudoku grid"></div>
+          <div class="status info" id="status">New game ready.</div>
+        </div>
+      </section>
+
+      <aside style="display:grid; gap:1.5rem;">
+        <section class="panel controls">
+          <div>
+            <h2 class="section-title">Game</h2>
+            <p class="muted">Choose a difficulty, then start a new grid.</p>
+          </div>
+          <div class="control-group">
+            <label for="difficulty">Difficulty</label>
+            <select class="select" id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" id="newGameBtn">New grid</button>
+            <button class="btn" id="checkBtn">Check</button>
+            <button class="btn" id="solveBtn">Solve</button>
+            <button class="btn" id="eraseBtn">Erase</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn wide" id="notesBtn">Notes mode: off</button>
+          </div>
+          <div class="num-pad" id="numPad"></div>
+        </section>
+
+        <section class="panel stats">
+          <div>
+            <h2 class="section-title">Stats</h2>
+            <p class="muted">The timer starts with every new game.</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat"><span>Time</span><strong id="timer">00:00</strong></div>
+            <div class="stat"><span>Mistakes</span><strong id="mistakes">0</strong></div>
+            <div class="stat"><span>Empty cells</span><strong id="remaining">0</strong></div>
+          </div>
+        </section>
+
+        <section class="panel tips">
+          <div>
+            <h2 class="section-title">Controls</h2>
+            <p class="muted">You can play with the mouse or the keyboard.</p>
+          </div>
+          <ul>
+            <li>Keys 1 to 9 to fill a cell.</li>
+            <li>Backspace, Delete, or 0 to erase.</li>
+            <li>Notes mode adds several candidates to an empty cell.</li>
+            <li>The Check button flags current conflicts.</li>
+          </ul>
+          <p class="footer-note">The game generates a new grid every time it loads.</p>
+        </section>
+      </aside>
+    </main>
+
+    <section class="panel" style="padding: var(--space-5); margin-top: var(--space-6);">
+      <h2 class="section-title">About this Sudoku game</h2>
+      <p class="muted" style="max-width: 70ch;">
+        Sudoku is a logic-based number puzzle played on a 9x9 grid split into nine 3x3 boxes.
+        The goal is to fill every row, column, and box with the digits 1 through 9 without repeating
+        a number. This free online version generates a fresh puzzle every time, so you can play as
+        many games as you like at your own pace.
+      </p>
+      <h2 class="section-title" style="margin-top: var(--space-4);">Frequently asked questions</h2>
+      <div style="display: grid; gap: var(--space-3); margin-top: var(--space-2);">
+        <div>
+          <h3 style="margin: 0 0 .25rem; font-size: var(--text-base);">Is this Sudoku game free to play?</h3>
+          <p class="muted" style="margin: 0;">Yes, this online Sudoku is completely free, with no sign-up or download required.</p>
+        </div>
+        <div>
+          <h3 style="margin: 0 0 .25rem; font-size: var(--text-base);">Can I play Sudoku with the keyboard?</h3>
+          <p class="muted" style="margin: 0;">Yes, use the number keys 1-9 to fill a cell, Backspace or Delete to erase, arrow keys to move around the grid, and the N key to toggle notes mode.</p>
+        </div>
+        <div>
+          <h3 style="margin: 0 0 .25rem; font-size: var(--text-base);">What difficulty levels are available?</h3>
+          <p class="muted" style="margin: 0;">You can choose between easy, medium, and hard difficulty before starting a new grid.</p>
+        </div>
+        <div>
+          <h3 style="margin: 0 0 .25rem; font-size: var(--text-base);">Does the game save my progress?</h3>
+          <p class="muted" style="margin: 0;">Each new grid starts fresh in your browser. Use the Check button anytime to spot conflicts and the Solve button to reveal the full solution.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Ko-fi floating button -->
+  <a class="kofi-float" href="https://ko-fi.com/mathieuboutros" target="_blank" rel="noopener noreferrer" aria-label="Donate on Ko-fi">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+      <line x1="6" y1="1" x2="6" y2="4"/>
+      <line x1="10" y1="1" x2="10" y2="4"/>
+      <line x1="14" y1="1" x2="14" y2="4"/>
+    </svg>
+    Ko-fi
+  </a>
+
+  <!-- Donation reminder modal -->
+  <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationTitle">
+    <div class="modal-card">
+      <div class="modal-emoji">☕</div>
+      <h3 id="donationTitle">Nice, grid complete!</h3>
+      <p>If you enjoyed the game, a small coffee on Ko-fi always makes my day. No pressure though.</p>
+      <div class="modal-actions">
+        <a class="btn-kofi" href="https://ko-fi.com/mathieuboutros" target="_blank" rel="noopener noreferrer" id="donationYesBtn">Buy me a coffee ☕</a>
+        <button class="btn-dismiss" type="button" id="donationNoBtn">No thanks</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById('board');
+    const statusEl = document.getElementById('status');
+    const timerEl = document.getElementById('timer');
+    const mistakesEl = document.getElementById('mistakes');
+    const remainingEl = document.getElementById('remaining');
+    const difficultyEl = document.getElementById('difficulty');
+    const notesBtn = document.getElementById('notesBtn');
+    const newGameBtn = document.getElementById('newGameBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const solveBtn = document.getElementById('solveBtn');
+    const eraseBtn = document.getElementById('eraseBtn');
+    const numPadEl = document.getElementById('numPad');
+    const themeToggle = document.querySelector('[data-theme-toggle]');
+
+    const difficultyMap = { easy: 38, medium: 48, hard: 56 };
+    let puzzle = [];
+    let solution = [];
+    let fixed = [];
+    let notes = Array.from({ length: 81 }, () => new Set());
+    let selected = 0;
+    let noteMode = false;
+    let mistakes = 0;
+    let seconds = 0;
+    let timerId = null;
+    let revealed = false;
+
+    // --- Donation reminder logic ---
+    const donationModal = document.getElementById('donationModal');
+    const donationNoBtn = document.getElementById('donationNoBtn');
+    const donationYesBtn = document.getElementById('donationYesBtn');
+    let winsSinceShown = 0;
+
+    function shouldShowDonationPrompt() {
+      if (localStorage.getItem('kofiDismissedForever') === '1') return false;
+      // Show after the very first win of the session, then every 3rd win after that.
+      winsSinceShown++;
+      if (winsSinceShown === 1 || winsSinceShown % 3 === 0) return true;
+      return false;
+    }
+
+    function showDonationModal() {
+      donationModal.classList.add('open');
+    }
+
+    function hideDonationModal() {
+      donationModal.classList.remove('open');
+    }
+
+    donationNoBtn.addEventListener('click', () => {
+      hideDonationModal();
+      // Don't ask again this session after a "no thanks".
+      winsSinceShown = -Infinity;
+    });
+    donationYesBtn.addEventListener('click', () => {
+      hideDonationModal();
+    });
+    donationModal.addEventListener('click', (e) => {
+      if (e.target === donationModal) hideDonationModal();
+    });
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function pattern(r, c) {
+      return (3 * (r % 3) + Math.floor(r / 3) + c) % 9;
+    }
+
+    function createSolvedBoard() {
+      const rows = shuffle([0, 1, 2]).flatMap(g => shuffle([0, 1, 2]).map(r => g * 3 + r));
+      const cols = shuffle([0, 1, 2]).flatMap(g => shuffle([0, 1, 2]).map(c => g * 3 + c));
+      const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const board = Array.from({ length: 9 }, (_, r) => Array.from({ length: 9 }, (_, c) => nums[pattern(rows[r], cols[c])])) ;
+      return board.flat();
+    }
+
+    function countSolutions(board) {
+      const copy = [...board];
+      let count = 0;
+      function valid(idx, n) {
+        const r = Math.floor(idx / 9), c = idx % 9;
+        for (let i = 0; i < 9; i++) {
+          if (copy[r * 9 + i] === n) return false;
+          if (copy[i * 9 + c] === n) return false;
+        }
+        const br = Math.floor(r / 3) * 3;
+        const bc = Math.floor(c / 3) * 3;
+        for (let rr = br; rr < br + 3; rr++) {
+          for (let cc = bc; cc < bc + 3; cc++) {
+            if (copy[rr * 9 + cc] === n) return false;
+          }
+        }
+        return true;
+      }
+      function solve() {
+        if (count > 1) return;
+        const idx = copy.indexOf(0);
+        if (idx === -1) { count++; return; }
+        for (let n = 1; n <= 9; n++) {
+          if (valid(idx, n)) {
+            copy[idx] = n;
+            solve();
+            copy[idx] = 0;
+          }
+        }
+      }
+      solve();
+      return count;
+    }
+
+    function makePuzzle(fullBoard, removals) {
+      const board = [...fullBoard];
+      const positions = shuffle([...Array(81).keys()]);
+      for (const pos of positions) {
+        if (removals <= 0) break;
+        const backup = board[pos];
+        board[pos] = 0;
+        if (countSolutions(board) !== 1) {
+          board[pos] = backup;
+        } else {
+          removals--;
+        }
+      }
+      return board;
+    }
+
+    function rowOf(i) { return Math.floor(i / 9); }
+    function colOf(i) { return i % 9; }
+    function boxOf(i) { return Math.floor(rowOf(i) / 3) * 3 + Math.floor(colOf(i) / 3); }
+
+    function isConflict(index, value) {
+      if (!value) return false;
+      for (let i = 0; i < 81; i++) {
+        if (i !== index && puzzle[i] === value) {
+          if (rowOf(i) === rowOf(index) || colOf(i) === colOf(index) || boxOf(i) === boxOf(index)) return true;
+        }
+      }
+      return false;
+    }
+
+    function render() {
+      boardEl.innerHTML = '';
+      const selectedValue = puzzle[selected];
+      for (let i = 0; i < 81; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'cell';
+        btn.type = 'button';
+        btn.setAttribute('role', 'gridcell');
+        btn.setAttribute('aria-label', `Cell ${rowOf(i) + 1}, ${colOf(i) + 1}`);
+        if (fixed[i]) btn.classList.add('fixed');
+        if (i === selected) btn.classList.add('selected');
+        if (rowOf(i) === rowOf(selected) || colOf(i) === colOf(selected) || boxOf(i) === boxOf(selected)) btn.classList.add('related');
+        if (i === selected) btn.classList.remove('related');
+        if (selectedValue && puzzle[i] === selectedValue) btn.classList.add('same-number');
+        if (isConflict(i, puzzle[i])) btn.classList.add('conflict');
+        btn.dataset.index = i;
+        btn.addEventListener('click', () => { selected = i; render(); });
+
+        if (puzzle[i]) {
+          btn.textContent = puzzle[i];
+        } else if (notes[i].size) {
+          const notesWrap = document.createElement('div');
+          notesWrap.className = 'notes';
+          for (let n = 1; n <= 9; n++) {
+            const span = document.createElement('span');
+            span.textContent = notes[i].has(n) ? n : '';
+            notesWrap.appendChild(span);
+          }
+          btn.appendChild(notesWrap);
+        }
+        boardEl.appendChild(btn);
+      }
+      mistakesEl.textContent = mistakes;
+      remainingEl.textContent = puzzle.filter(v => v === 0).length;
+      document.querySelectorAll('.num-btn').forEach(btn => {
+        const n = Number(btn.dataset.num);
+        btn.classList.toggle('active', puzzle[selected] === n);
+      });
+    }
+
+    function formatTime(total) {
+      const m = String(Math.floor(total / 60)).padStart(2, '0');
+      const s = String(total % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function startTimer() {
+      clearInterval(timerId);
+      seconds = 0;
+      timerEl.textContent = '00:00';
+      timerId = setInterval(() => {
+        seconds++;
+        timerEl.textContent = formatTime(seconds);
+      }, 1000);
+    }
+
+    function setStatus(message, type = 'info') {
+      statusEl.className = `status ${type}`;
+      statusEl.textContent = message;
+    }
+
+    function toggleTheme() {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      themeToggle.innerHTML = next === 'dark'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+
+    function applyInput(value) {
+      if (fixed[selected] || revealed) return;
+      if (value === 0) {
+        puzzle[selected] = 0;
+        notes[selected].clear();
+        setStatus('Cell cleared.', 'info');
+        render();
+        return;
+      }
+      if (noteMode && puzzle[selected] === 0) {
+        if (notes[selected].has(value)) notes[selected].delete(value); else notes[selected].add(value);
+        setStatus(`Note ${value} ${notes[selected].has(value) ? 'added' : 'removed'}.`, 'info');
+        render();
+        return;
+      }
+      puzzle[selected] = value;
+      notes[selected].clear();
+      if (value !== solution[selected]) {
+        mistakes++;
+        setStatus(`${value} doesn't fit here.`, 'error');
+      } else {
+        setStatus(`${value} is correct.`, 'success');
+      }
+      render();
+      checkWin();
+    }
+
+    function checkBoard(showMessage = true) {
+      const conflicts = puzzle.reduce((acc, val, i) => acc + (isConflict(i, val) ? 1 : 0), 0);
+      render();
+      if (!showMessage) return conflicts === 0;
+      if (conflicts === 0 && !puzzle.includes(0)) setStatus('Grid complete with no conflicts.', 'success');
+      else if (conflicts === 0) setStatus('No conflicts visible right now.', 'info');
+      else setStatus(`${conflicts} cell(s) with conflicts detected.`, 'error');
+      return conflicts === 0;
+    }
+
+    function checkWin() {
+      if (puzzle.every((v, i) => v === solution[i])) {
+        clearInterval(timerId);
+        setStatus(`Nice, sudoku solved in ${formatTime(seconds)} with ${mistakes} mistake(s).`, 'success');
+        if (shouldShowDonationPrompt()) {
+          setTimeout(showDonationModal, 900);
+        }
+      }
+    }
+
+    function newGame() {
+      solution = createSolvedBoard();
+      puzzle = makePuzzle(solution, difficultyMap[difficultyEl.value]);
+      fixed = puzzle.map(v => v !== 0);
+      notes = Array.from({ length: 81 }, () => new Set());
+      selected = puzzle.findIndex(v => v === 0);
+      if (selected === -1) selected = 0;
+      mistakes = 0;
+      revealed = false;
+      startTimer();
+      setStatus('New grid generated.', 'info');
+      render();
+    }
+
+    function solveGame() {
+      puzzle = [...solution];
+      revealed = true;
+      clearInterval(timerId);
+      setStatus('The full solution has been revealed.', 'info');
+      render();
+    }
+
+    function setupNumPad() {
+      numPadEl.innerHTML = '';
+      for (let n = 1; n <= 9; n++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn num-btn';
+        btn.type = 'button';
+        btn.dataset.num = n;
+        btn.textContent = n;
+        btn.addEventListener('click', () => applyInput(n));
+        numPadEl.appendChild(btn);
+      }
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'btn num-btn';
+      clearBtn.type = 'button';
+      clearBtn.textContent = '0';
+      clearBtn.title = 'Erase the cell';
+      clearBtn.addEventListener('click', () => applyInput(0));
+      numPadEl.appendChild(clearBtn);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key >= '1' && e.key <= '9') { applyInput(Number(e.key)); return; }
+      if (['Backspace', 'Delete', '0'].includes(e.key)) { applyInput(0); return; }
+      if (e.key === 'n' || e.key === 'N') {
+        noteMode = !noteMode;
+        notesBtn.textContent = `Notes mode: ${noteMode ? 'on' : 'off'}`;
+      }
+      if (e.key === 'ArrowRight') selected = (selected + 1) % 81;
+      if (e.key === 'ArrowLeft') selected = (selected + 80) % 81;
+      if (e.key === 'ArrowUp') selected = (selected + 72) % 81;
+      if (e.key === 'ArrowDown') selected = (selected + 9) % 81;
+      render();
+    });
+
+    notesBtn.addEventListener('click', () => {
+      noteMode = !noteMode;
+      notesBtn.textContent = `Notes mode: ${noteMode ? 'on' : 'off'}`;
+      setStatus(`Notes mode ${noteMode ? 'enabled' : 'disabled'}.`, 'info');
+    });
+    newGameBtn.addEventListener('click', newGame);
+    checkBtn.addEventListener('click', () => checkBoard(true));
+    solveBtn.addEventListener('click', solveGame);
+    eraseBtn.addEventListener('click', () => applyInput(0));
+    themeToggle.addEventListener('click', toggleTheme);
+
+    setupNumPad();
+    newGame();
+  </script>
+</body>
+</html>
